@@ -33,7 +33,7 @@ class App{
 		this.inputArray.push(newInput);
 		this.inputDiv.appendChild(newInput);
 	}
-
+	// Change from button to input field.
 	createAddMoreButton(): void{
 		const addInputDiv = document.querySelector(".add-input-data")! as HTMLElement;
 		const button = document.createElement("input")! as HTMLButtonElement;
