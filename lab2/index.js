@@ -1,16 +1,13 @@
 var PlayingMachine = /** @class */ (function () {
     function PlayingMachine() {
-        this.main();
-    }
-    PlayingMachine.prototype.main = function () {
-        this.getAudioElements();
-        this.addEventListeners();
-    };
-    PlayingMachine.prototype.getAudioElements = function () {
-        this.hihat = document.querySelector('[data-sound="hihat"]');
+        this.hihat = document.querySelector("[data-sound='hihat']");
         this.kick = document.querySelector("[data-sound='kick']");
         this.snare = document.querySelector("[data-sound='snare']");
         this.tom = document.querySelector("[data-sound='tom']");
+        this.main();
+    }
+    PlayingMachine.prototype.main = function () {
+        this.addEventListeners();
     };
     PlayingMachine.prototype.addEventListeners = function () {
         document.addEventListener("keypress", this.keyPressed);
@@ -18,16 +15,27 @@ var PlayingMachine = /** @class */ (function () {
     PlayingMachine.prototype.keyPressed = function (ev) {
         console.log(ev);
         var key = ev.key;
+        this.kick.play();
         switch (key) {
             case "q":
-                this.playSound(this.hihat);
+                this.playWave(this.hihat);
+                break;
+            case "w":
+                this.kick.play();
+                break;
+            case "e":
+                this.playWave(this.snare);
+                break;
+            case "r":
+                this.playWave(this.tom);
                 break;
         }
     };
-    PlayingMachine.prototype.playSound = function (sound) {
-        sound.currentTime = 0;
-        sound.play();
+    PlayingMachine.prototype.playWave = function (sound) {
+        var item = sound;
+        item.currentTime = 0;
+        item.play();
     };
     return PlayingMachine;
 }());
-var app = new PlayingMachine();
+var playinMachine = new PlayingMachine();

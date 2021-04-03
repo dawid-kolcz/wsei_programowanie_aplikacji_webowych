@@ -1,44 +1,46 @@
 class PlayingMachine{
-    hihat: HTMLAudioElement;
-    kick: HTMLAudioElement;
-    snare: HTMLAudioElement;
-    tom: HTMLAudioElement;
+    private hihat: HTMLAudioElement = document.querySelector("[data-sound='hihat']");
+    private kick: HTMLAudioElement = document.querySelector("[data-sound='kick']");
+    private snare: HTMLAudioElement = document.querySelector("[data-sound='snare']");
+    private tom: HTMLAudioElement = document.querySelector("[data-sound='tom']");
 
     constructor(){
         this.main();
     }
 
     main(): void{
-        this.getAudioElements();
         this.addEventListeners();
-    }
-
-    getAudioElements(): void{
-        this.hihat = document.querySelector('[data-sound="hihat"]');
-        this.kick = document.querySelector("[data-sound='kick']");
-        this.snare = document.querySelector("[data-sound='snare']");
-        this.tom = document.querySelector("[data-sound='tom']");
     }
 
     addEventListeners(): void{
         document.addEventListener("keypress", this.keyPressed);
     }
-    
+
     keyPressed(ev: KeyboardEvent): void{
         console.log(ev);
         const key = ev.key;
-
+        this.kick.play();
         switch (key){
             case "q":
-                this.playSound(this.hihat);
+                this.playWave(this.hihat);
+                break;
+            case "w":
+                this.kick.play();
+                break;
+            case "e":
+                this.playWave(this.snare);
+                break;
+            case "r":
+                this.playWave(this.tom);
                 break;
         }
-    }
-
-    playSound(sound: HTMLAudioElement): void{
-        sound.currentTime = 0;
-        sound.play();
+    }    
+    
+    private playWave(sound: HTMLAudioElement): void{
+        const item: HTMLAudioElement = sound;
+        item.currentTime = 0;
+        item.play();
     }
 }
 
-const app = new PlayingMachine();
+const playinMachine = new PlayingMachine();
