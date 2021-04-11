@@ -1,0 +1,28 @@
+body {
+  background: orange;
+}
+
+.LabelText{
+  color: white;
+}
+
+.CityText{
+  border: 0px;
+  border-bottom: 1px solid white;
+  background: transparent;
+  color: white;
+}
+
+.CityText:focus{
+  border: 0px;
+}
+
+.CityButton{
+  border: 0px;
+  background: transparent;
+  color: white;
+}
+
+.CityButton:hover{
+  border-bottom: 1px solid white;
+}
