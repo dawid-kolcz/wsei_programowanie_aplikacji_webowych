@@ -13,13 +13,11 @@ module.exports = {
   },
   devtool: "inline-source-map",
   plugins: [
-    new CopyPlugin([
-      {
-        from: "src/*.html",
-        to: "",
-        flatten: true
-      }
-    ])
+    new CopyPlugin({
+      patterns: [
+        {from: "src", to: ""},
+      ]
+    }),
   ],
   module: {
     rules: [
