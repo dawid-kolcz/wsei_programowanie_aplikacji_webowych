@@ -1,4 +1,4 @@
-export class App {
+export class WheatherAPI {
     opwApiKey = '50d53005c0fd5f556bb4ef15224c4209';
 
     constructor() {

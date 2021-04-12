@@ -1,16 +1,21 @@
+*{
+  font-family: consolas;
+  font-size: 16px;
+  color: white;
+}
+
 body {
   background: orange;
 }
-
-.LabelText{
-  color: white;
+.CityInput{
+  display: table;
+  margin: auto;
 }
 
 .CityText{
   border: 0px;
   border-bottom: 1px solid white;
   background: transparent;
-  color: white;
 }
 
 .CityText:focus{
@@ -20,7 +25,7 @@ body {
 .CityButton{
   border: 0px;
   background: transparent;
-  color: white;
+
 }
 
 .CityButton:hover{

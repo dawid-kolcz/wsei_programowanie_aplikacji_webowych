@@ -1,4 +1,5 @@
-import { App } from './app';
-import './main.scss';
+import { WheatherAPI } from './WheaterAPI';
+import { RenderWheather } from './RenderWheather';
 
-const app = new App();
+const wheatherApi = new WheatherAPI();
+const renderWheather = new RenderWheather(wheatherApi);
