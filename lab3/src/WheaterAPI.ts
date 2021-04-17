@@ -2,33 +2,44 @@ export class WheatherAPI {
     opwApiKey = '50d53005c0fd5f556bb4ef15224c4209';
 
     constructor() {
-        this.getCityInfo('krakow');
     }
 
     async getCityInfo(city: string) {
-        const weather = await this.getWeather(city);
-        this.saveData(weather);
+        const data = await this.getWeather(city);
+        let name = data.name;
+        
+        // const temp = data.name;
+        // const weather = data.name;
+        return {
+            'name': name,
+            // 'temp': temp,
+            // 'weather': weather,
+        };
     }
 
-    async getWeather(city: string): Promise<any> {
-        const openWeatherUrl = `http://api.openweathermap.org/data/2.5/weather?q=${city}&APPID=${this.opwApiKey}`;
+    async getWeather(city: string) {
+        const openWeatherUrl = `http://api.openweathermap.org/data/2.5/weather?q=${city}&APPID=${this.opwApiKey}&units=metric`;
         const weatherResponse = await fetch(openWeatherUrl);
         const weatherData = await weatherResponse.json();
-        console.log(weatherData);
         return weatherData;
     }
 
-    saveData(data: Promise<any>) {
-        console.log(data);
-        localStorage.setItem('weatherData', JSON.stringify(data));
+    saveData(city: string) {
+        let data =  localStorage.getItem('weatherData');
+        if(data === null){
+            data = city;            
+        }else{
+            data =+ ',' + city;
+        }
+        localStorage.setItem('weatherData', data);
     }
 
-    getData() {
+    getData(): Array<string> {
         const data = localStorage.getItem('weatherData');
         if (data) {
-            return JSON.parse(data);
+            return data.split(',');
         } else {
-            return {};
+            return null;
         }
     }
 }

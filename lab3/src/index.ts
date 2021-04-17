@@ -1,5 +1,5 @@
 import { WheatherAPI } from './WheaterAPI';
-import { RenderWheather } from './RenderWheather';
+import { RenderWeather } from './RenderWeather';
 
 const wheatherApi = new WheatherAPI();
-const renderWheather = new RenderWheather(wheatherApi);
+const renderWheather = new RenderWeather(wheatherApi);
