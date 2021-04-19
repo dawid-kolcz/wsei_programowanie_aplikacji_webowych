@@ -33,5 +33,26 @@ body {
 }
 
 .WheatherWrapper{
-  display: table;
+  display: inline;
+  margin: auto;
+}
+
+#weatherBox{
+  margin: 20px;
+  width: 180px;
+  height: 60px;
+  border: 1px solid white;
+  padding: 10px;
+  border-radius: 10%;
+}
+
+#cityName{
+  display: block;
+}
+
+#cityWeather{
+  display: block;
+}
+#cityTemperature{
+  display:block;
 }

@@ -6,14 +6,13 @@ export class WheatherAPI {
 
     async getCityInfo(city: string) {
         const data = await this.getWeather(city);
-        let name = data.name;
-        
-        // const temp = data.name;
-        // const weather = data.name;
+        const name = data.name;
+        const temp = data.main.temp;
+        const weather = data.weather[0].description;
         return {
             'name': name,
-            // 'temp': temp,
-            // 'weather': weather,
+            'temp': temp,
+            'weather': weather,
         };
     }
 

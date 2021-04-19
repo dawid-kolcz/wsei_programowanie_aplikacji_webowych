@@ -24,13 +24,14 @@ export class RenderWeather{
         const weather = document.createElement('span');
         const temperature = document.createElement('span');
 
+        box.id = 'weatherBox';
         name.id = 'cityName';
         weather.id = 'cityWeather';
         temperature.id = 'cityTemperature';
 
-        name.innerText = data.name;
-        weather.innerText = data.weather;
-        temperature.innerText = data.temp;
+        name.innerText = 'Miasto: ' + data.name;
+        weather.innerText = 'Pogoda: ' + data.weather;
+        temperature.innerText = data.temp + 'C';
 
         box.appendChild(name);
         box.appendChild(weather);
