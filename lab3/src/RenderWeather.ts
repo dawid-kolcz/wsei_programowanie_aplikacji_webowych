@@ -9,15 +9,30 @@ export class RenderWeather{
         this.api = wheather;
         this.cityName = document.querySelector(".CityInput #city") as HTMLInputElement;
         this.wrapper = document.querySelector("#wrapper") as HTMLDivElement;
-        document.querySelector(".CityInput #button").addEventListener("click", () => this.renderWheather());
+        document.querySelector(".CityInput #button").addEventListener("click", () => this.searchCity());
+        this.getDataFromStorage();
     }
-    async renderWheather() {
-        const data = await this.api.getCityInfo(this.cityName.value);
-        
+    getDataFromStorage() {
+        const data = localStorage.getItem('weatherData')
+        let arr = data.split(',');
+        if(arr[0] != ''){
+            arr.forEach((element) =>{
+                this.renderWheather(element);
+            });
+        }
+    }
+    async renderWheather(city: string) {
+        const data = await this.api.getCityInfo(city);
         this.createWeatherBox(data);
-        this.cityName.value = '';
     }
 
+    searchCity(): void{
+        const city = this.cityName.value;
+        
+        this.api.saveData(city);
+        this.renderWheather(city);
+        this.cityName.value = '';
+    }
     createWeatherBox(data: any): void{
         const box = document.createElement('div');
         const name = document.createElement('span');

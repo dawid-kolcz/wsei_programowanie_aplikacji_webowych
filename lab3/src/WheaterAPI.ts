@@ -25,10 +25,10 @@ export class WheatherAPI {
 
     saveData(city: string) {
         let data =  localStorage.getItem('weatherData');
-        if(data === null){
+        if(data == ''){
             data = city;            
         }else{
-            data =+ ',' + city;
+            data += ',' + city;
         }
         localStorage.setItem('weatherData', data);
     }

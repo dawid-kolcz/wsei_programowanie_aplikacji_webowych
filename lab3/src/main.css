@@ -7,10 +7,6 @@
 body {
   background: orange;
 }
-.CityInput{
-  display: table;
-  margin: auto;
-}
 
 .CityText{
   border: 0px;
@@ -33,26 +29,26 @@ body {
 }
 
 .WheatherWrapper{
-  display: inline;
   margin: auto;
 }
 
 #weatherBox{
-  margin: 20px;
-  width: 180px;
-  height: 60px;
+  display: inline-block;
+  margin: 10px;
+  width: 200px;
+  height: 100px;
   border: 1px solid white;
   padding: 10px;
   border-radius: 10%;
 }
 
-#cityName{
+#cityName, #cityWeather, #cityTemperature{
   display: block;
+  margin: auto;
+  width: auto;
 }
 
-#cityWeather{
-  display: block;
-}
-#cityTemperature{
-  display:block;
+.container{
+  width: 800px;
+  margin: auto;
 }
