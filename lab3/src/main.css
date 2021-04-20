@@ -33,13 +33,14 @@ body {
 }
 
 #weatherBox{
-  display: inline-block;
+  float: left;
+  box-sizing: border-box;
+  background-color: rgba(0, 0, 0, 0.1);
   margin: 10px;
   width: 200px;
   height: 100px;
   border: 1px solid white;
   padding: 10px;
-  border-radius: 10%;
 }
 
 #cityName, #cityWeather, #cityTemperature{
