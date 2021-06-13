@@ -1,8 +1,8 @@
 export const firebaseConfig = {
-    apiKey: "AIzaSyCTzi64SfVlNhnnFQgWLylRutgfiQkWl1I",
-    authDomain: "notekeep-b85ac.firebaseapp.com",
-    projectId: "notekeep-b85ac",
-    storageBucket: "notekeep-b85ac.appspot.com",
-    messagingSenderId: "1083815608836",
-    appId: "1:1083815608836:web:3ad60179cf8f45e7a36b51"
-  };
+  apiKey: "AIzaSyCJeBTEJTIgXcgVCFjvNIH1HmabPOtHezQ",
+  authDomain: "notekeeper2-964e6.firebaseapp.com",
+  projectId: "notekeeper2-964e6",
+  storageBucket: "notekeeper2-964e6.appspot.com",
+  messagingSenderId: "137650469690",
+  appId: "1:137650469690:web:34d94ad20c0bcd58c42e03"
+};
