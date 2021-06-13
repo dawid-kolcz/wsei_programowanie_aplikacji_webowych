@@ -1,5 +1,5 @@
 import firebase from 'firebase';
-import { Note } from './Notes';
+import { Note, NoteWithID } from './Notes';
 import { firebaseConfig } from '../config';
 
 export const firebaseApp = firebase.initializeApp(firebaseConfig);
@@ -13,7 +13,7 @@ export async function deleteNote(id: string) {
     const res = await db.collection('notes').doc(id).delete();
 }
 
-export async function updateNote(id: string, note: any) {
+export async function updateNote(id: string, note: Note) {
     const res = await db.collection('notes').doc(id).update(note);
 }
 

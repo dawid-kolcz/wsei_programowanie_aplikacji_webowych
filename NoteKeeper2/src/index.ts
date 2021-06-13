@@ -1,12 +1,13 @@
 import './main.scss';
 import  * as FB from "./objects/FB";
-import { Functions } from "./helpers/Functions"
-import { Note } from "./objects/Notes";
+import { Note, Notes } from "./objects/Notes";
 
 function main(): void{
+    const notes = new Notes();
+
     const addButton = document.querySelector("#addNoteButton") as HTMLButtonElement;
     addButton.addEventListener("click", () => { 
-        
+        notes.newNote();
         console.log("Create new note");
     });
 }
