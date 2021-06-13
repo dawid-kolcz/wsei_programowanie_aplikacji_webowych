@@ -1,8 +1,8 @@
 import firebase from 'firebase';
-import { Note } from '../objects/Notes';
+import { Note } from './Notes';
 import { firebaseConfig } from '../config';
 
-const firebaseApp = firebase.initializeApp(firebaseConfig);
+export const firebaseApp = firebase.initializeApp(firebaseConfig);
 export const db = firebaseApp.firestore();
 
 export async function addNote(note: Note) {
