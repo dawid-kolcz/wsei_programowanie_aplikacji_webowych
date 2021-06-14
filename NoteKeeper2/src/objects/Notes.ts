@@ -1,3 +1,6 @@
+import { StorageType, globalStorage } from "../config";
+import * as FB from "./FB";
+
 export interface Note{
     title: string,    
     content: string,
@@ -13,15 +16,45 @@ export interface NoteWithID{
 export class Notes{
     notesArray: Array<NoteWithID> = [];
 
-    saveNote(note: Note): Note{
-        return null;
+    getNotesFromFirebase(): void{
+        
+    }
+
+    getNotesFromStorage(): void{
+
+    }
+
+    deleteNoteFromFirebase(id: string): void{
+        
+    }
+
+    saveNote(note: Note){
+        switch (+globalStorage) {
+            case StorageType.Firebase:
+                    this.saveNoteToFirebase(note);
+                break;
+            case StorageType.LocalStorage:
+                    this.saveNoteToLocalStorage(note);
+                break;
+            default:
+                break;
+        }
     }
     
+    saveNoteToFirebase(note: Note): void{
+        FB.addNote(note);
+    }
+
+    saveNoteToLocalStorage(note: Note): void{
+
+    }
+
     newNote(): void{
         const newNote = document.createElement("div") as HTMLDivElement;
     
         newNote.className = "note";
-    
+        newNote.style.backgroundColor = "yellow";
+
         const newTitle = document.createElement("input") as HTMLInputElement;
         newTitle.placeholder = "Title...";
     
@@ -38,17 +71,30 @@ export class Notes{
         const pinedTick = document.createElement("input") as HTMLInputElement;
         pinedTick.type = "checkbox";
         
-        this.switchBGColorListener(blueButton);
-        this.switchBGColorListener(greenButton);
-        this.switchBGColorListener(yellowButton);
-        this.switchBGColorListener(whiteButton);
-    
+        const saveButton = document.createElement("button") as HTMLButtonElement;
+        saveButton.innerText = "Save note";
+        saveButton.addEventListener("click", () => {
+            const note: Note = {
+                title: newTitle.value,
+                content: newContent.value,
+                bgColor: newNote.style.backgroundColor,
+                pinned: pinedTick.checked
+            }
+            this.saveNote(note);
+        });
+
+        this.onBGColorClick(blueButton);
+        this.onBGColorClick(greenButton);
+        this.onBGColorClick(yellowButton);
+        this.onBGColorClick(whiteButton);
+
         buttonWrapper.appendChild(blueButton);
         buttonWrapper.appendChild(greenButton);
         buttonWrapper.appendChild(yellowButton);
         buttonWrapper.appendChild(whiteButton);
         buttonWrapper.appendChild(pinedTick);
-    
+        buttonWrapper.appendChild(saveButton);
+
         newNote.appendChild(newTitle);
         newNote.appendChild(newContent);
         newNote.appendChild(buttonWrapper);
@@ -56,7 +102,7 @@ export class Notes{
         document.querySelector("#notesWrapper").appendChild(newNote);
     }
     
-    switchBGColorListener(pressedButton: HTMLButtonElement){
+    onBGColorClick(pressedButton: HTMLButtonElement){
         pressedButton.addEventListener("click", () =>{
             pressedButton.parentElement.parentElement.style.backgroundColor = pressedButton.dataset.color;
         });

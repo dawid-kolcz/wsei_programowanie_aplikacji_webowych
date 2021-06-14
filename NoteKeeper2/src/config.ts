@@ -6,3 +6,10 @@ export const firebaseConfig = {
   messagingSenderId: "137650469690",
   appId: "1:137650469690:web:34d94ad20c0bcd58c42e03"
 };
+
+export enum StorageType{
+  Firebase,
+  LocalStorage,
+}
+
+export const globalStorage = StorageType.Firebase;
