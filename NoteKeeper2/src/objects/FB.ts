@@ -1,12 +1,14 @@
 import firebase from 'firebase';
-import { Note, NoteWithID } from './Notes';
+import { Note } from './Notes';
 import { firebaseConfig } from '../config';
 
 export const firebaseApp = firebase.initializeApp(firebaseConfig);
 export const db = firebaseApp.firestore();
 
-export async function addNote(note: Note) {
+// Return: doc id as string
+export async function addNote(note: Note): Promise<string> {
     const res = await db.collection('notes').add(note);
+    return res.id;
 }
 
 export async function deleteNote(id: string) {

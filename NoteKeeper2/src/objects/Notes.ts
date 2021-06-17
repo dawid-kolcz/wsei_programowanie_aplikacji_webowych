@@ -2,54 +2,90 @@ import { StorageType, globalStorage } from "../config";
 import * as FB from "./FB";
 
 export interface Note{
+    id: string,
     title: string,    
     content: string,
     bgColor: string,
     pinned: boolean,
 }
 
-export interface NoteWithID{
-    id: string;
-    data: Note;
-}
-
 export class Notes{
-    notesArray: Array<NoteWithID> = [];
+    notesArray: Array<Note> = [];
 
-    getNotesFromFirebase(): void{
-        
-    }
-
-    getNotesFromStorage(): void{
-
-    }
-
-    deleteNoteFromFirebase(id: string): void{
-        
-    }
-
-    saveNote(note: Note){
+    async getNotes(){
         switch (+globalStorage) {
             case StorageType.Firebase:
-                    this.saveNoteToFirebase(note);
+                await this.getNotesFromFirebase();
                 break;
             case StorageType.LocalStorage:
-                    this.saveNoteToLocalStorage(note);
+                await this.getNotesFromStorage();
                 break;
             default:
                 break;
         }
     }
-    
-    saveNoteToFirebase(note: Note): void{
-        FB.addNote(note);
+
+    async getNotesFromFirebase(){
+        
     }
 
-    saveNoteToLocalStorage(note: Note): void{
+    async getNotesFromStorage(){
 
     }
 
-    newNote(): void{
+    async deleteNote(note: Note){
+        switch(+globalStorage){
+            case StorageType.Firebase:
+                await this.deleteNoteFromFirebase(note);
+                break;
+            case StorageType.LocalStorage:
+                await this.deleteNoteFromStorage(note);
+                break;
+            default:
+        }
+    }
+
+    async deleteNoteFromFirebase(note: Note){
+        await FB.deleteNote(note.id);
+        let index = this.notesArray.findIndex(x => x.id == note.id);
+        this.notesArray.splice(index, 1);
+    }
+
+    async deleteNoteFromStorage(note: Note){
+        let stored: Array<Note> = JSON.parse(localStorage.getItem("notes"));
+        let index = stored.findIndex(x => x.id == note.id);
+        stored.splice(index, 1);
+        this.notesArray.splice(index, 1);
+        localStorage.setItem("notes", JSON.stringify(stored))
+    }
+
+    async saveNote(note: Note){
+        switch (+globalStorage) {
+            case StorageType.Firebase:
+                await this.saveNoteToFirebase(note);
+                break;
+            case StorageType.LocalStorage:
+                await this.saveNoteToLocalStorage(note);
+                break;
+            default:
+                break;
+        }
+    }
+    // Save note to database and assign note an ID.
+    async saveNoteToFirebase(note: Note){
+        await FB.addNote(note).then( id => note.id = id);
+    }
+
+    async saveNoteToLocalStorage(note: Note){
+        let id = this.notesArray.length + 1;
+        note.id = id+"";
+        let stored = localStorage.getItem("notes");
+        if(stored == null) stored = "";
+        stored += JSON.stringify(note);
+        localStorage.setItem("notes", stored);
+    }
+
+    async newNote(){
         const newNote = document.createElement("div") as HTMLDivElement;
     
         newNote.className = "note";
@@ -74,19 +110,15 @@ export class Notes{
         const saveButton = document.createElement("button") as HTMLButtonElement;
         saveButton.innerText = "Save note";
         saveButton.addEventListener("click", () => {
-            const note: Note = {
-                title: newTitle.value,
-                content: newContent.value,
-                bgColor: newNote.style.backgroundColor,
-                pinned: pinedTick.checked
-            }
-            this.saveNote(note);
+            this.onSaveClick(newTitle.value, newContent.value, 
+                newNote.style.backgroundColor, pinedTick.checked, 
+                newNote, buttonWrapper)
         });
 
-        this.onBGColorClick(blueButton);
-        this.onBGColorClick(greenButton);
-        this.onBGColorClick(yellowButton);
-        this.onBGColorClick(whiteButton);
+        this.onBGColorClick(blueButton, newNote);
+        this.onBGColorClick(greenButton, newNote);
+        this.onBGColorClick(yellowButton, newNote);
+        this.onBGColorClick(whiteButton, newNote);
 
         buttonWrapper.appendChild(blueButton);
         buttonWrapper.appendChild(greenButton);
@@ -102,9 +134,26 @@ export class Notes{
         document.querySelector("#notesWrapper").appendChild(newNote);
     }
     
-    onBGColorClick(pressedButton: HTMLButtonElement){
+    async onSaveClick(title: string, content: string, bg: string, pin: boolean,
+            noteDiv: HTMLDivElement, buttonDiv: HTMLDivElement){
+        
+        const note: Note = {
+            id: "",
+            title: title,
+            content: content,
+            bgColor: bg,
+            pinned: pin,
+        }
+        await this.saveNote(note);
+        noteDiv.id = note.id;       
+        this.notesArray.push(note)
+        noteDiv.removeChild(buttonDiv);
+        
+    }
+
+    onBGColorClick(pressedButton: HTMLButtonElement, noteDiv: HTMLDivElement){
         pressedButton.addEventListener("click", () =>{
-            pressedButton.parentElement.parentElement.style.backgroundColor = pressedButton.dataset.color;
+            noteDiv.style.backgroundColor = pressedButton.dataset.color;
         });
     }
     
@@ -113,5 +162,15 @@ export class Notes{
         button.className = classname;
         button.dataset.color = bgcolor;
         return button;
+    }
+
+    createDeleteButton(): HTMLButtonElement{
+        const button = document.createElement("button") as HTMLButtonElement;
+        button.addEventListener("click", () => this.onDeleteClick());
+        return button;
+    }
+
+    async onDeleteClick(){
+        
     }
 }
