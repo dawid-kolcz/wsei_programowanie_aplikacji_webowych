@@ -52,11 +52,9 @@ export class Notes{
     }
 
     async deleteNoteFromStorage(note: Note){
-        let stored: Array<Note> = JSON.parse(localStorage.getItem("notes"));
-        let index = stored.findIndex(x => x.id == note.id);
-        stored.splice(index, 1);
+        let index = this.notesArray.findIndex(x => x.id == note.id);
         this.notesArray.splice(index, 1);
-        localStorage.setItem("notes", JSON.stringify(stored))
+        localStorage.setItem("notes", JSON.stringify(this.notesArray));
     }
 
     async saveNote(note: Note){
@@ -77,12 +75,12 @@ export class Notes{
     }
 
     async saveNoteToLocalStorage(note: Note){
-        let id = this.notesArray.length + 1;
-        note.id = id+"";
-        let stored = localStorage.getItem("notes");
-        if(stored == null) stored = "";
-        stored += JSON.stringify(note);
-        localStorage.setItem("notes", stored);
+        let i = 0;
+        this.notesArray.forEach(e => {
+            e.id = i+"";
+            i++;
+        });
+        localStorage.setItem("notes", JSON.stringify(this.notesArray));
     }
 
     async newNote(){
@@ -96,7 +94,9 @@ export class Notes{
     
         const newContent = document.createElement("input") as HTMLInputElement;
         newContent.placeholder = "All your notes belong here..."
-    
+        
+        const deleteButton = this.createDeleteButton();
+        const editButton = this.createEditButton();
         const buttonWrapper = document.createElement("div") as HTMLDivElement;
         
         const blueButton   = this.createColorButton("lightblueBGButton", "blue");
@@ -128,6 +128,8 @@ export class Notes{
         buttonWrapper.appendChild(saveButton);
 
         newNote.appendChild(newTitle);
+        newNote.appendChild(deleteButton);
+        newNote.appendChild(editButton);
         newNote.appendChild(newContent);
         newNote.appendChild(buttonWrapper);
     
@@ -144,11 +146,14 @@ export class Notes{
             bgColor: bg,
             pinned: pin,
         }
-        await this.saveNote(note);
-        noteDiv.id = note.id;       
         this.notesArray.push(note)
-        noteDiv.removeChild(buttonDiv);
+        await this.saveNote(note);
         
+        noteDiv.id = note.id;       
+        noteDiv.removeChild(buttonDiv);
+        noteDiv.querySelectorAll("input").forEach(element => {
+            element.disabled = true;
+        })
     }
 
     onBGColorClick(pressedButton: HTMLButtonElement, noteDiv: HTMLDivElement){
@@ -166,11 +171,31 @@ export class Notes{
 
     createDeleteButton(): HTMLButtonElement{
         const button = document.createElement("button") as HTMLButtonElement;
-        button.addEventListener("click", () => this.onDeleteClick());
+        button.className = "deleteButton";
+        button.innerText = "Delete";
+        button.addEventListener("click", () => this.onDeleteClick(button));
         return button;
     }
 
-    async onDeleteClick(){
-        
+    async onDeleteClick(button: HTMLButtonElement){
+        let id = button.parentElement.id;
+        let index = this.notesArray.findIndex(e => e.id == id);
+        let note = this.notesArray[index];
+        console.log("onDeleteClick note:" + note);
+        await this.deleteNote(note);
+        button.parentElement.parentElement.removeChild(button.parentElement);
+    }
+
+    createEditButton(): HTMLButtonElement{
+        const button = document.createElement("button") as HTMLButtonElement;
+        button.className = "editButton";
+        button.innerText = "Edit";
+        button.addEventListener("click", () => this.onEditClick(button));
+        return button;
+    }
+
+    async onEditClick(button: HTMLButtonElement){
+        button.parentElement.querySelectorAll("input")
+            .forEach(element => element.disabled = false);
     }
 }
