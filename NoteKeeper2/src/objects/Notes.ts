@@ -30,7 +30,10 @@ export class Notes{
     }
 
     async getNotesFromStorage(){
-
+        this.notesArray = await JSON.parse(localStorage.getItem("notes"));
+        this.notesArray.forEach(element => {
+            
+        });
     }
 
     async deleteNote(note: Note){
@@ -82,6 +85,12 @@ export class Notes{
         });
         localStorage.setItem("notes", JSON.stringify(this.notesArray));
     }
+
+    renderSavedNote(note: Note){
+
+    }
+
+
 
     async newNote(){
         const newNote = document.createElement("div") as HTMLDivElement;
