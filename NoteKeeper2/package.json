@@ -8,7 +8,7 @@
     "start": "webpack-dev-server --content-base src",
     "build": "webpack"
   },
-  "author": "",
+  "author": "nomrk",
   "license": "ISC",
   "devDependencies": {
     "copy-webpack-plugin": "^5.1.1",

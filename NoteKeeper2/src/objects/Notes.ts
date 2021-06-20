@@ -92,7 +92,7 @@ export class Notes{
 
 
 
-    async newNote(){
+    newNote(): HTMLDivElement{
         const newNote = document.createElement("div") as HTMLDivElement;
     
         newNote.className = "note";
@@ -143,6 +143,8 @@ export class Notes{
         newNote.appendChild(buttonWrapper);
     
         document.querySelector("#notesWrapper").appendChild(newNote);
+
+        return newNote;
     }
     
     async onSaveClick(title: string, content: string, bg: string, pin: boolean,
