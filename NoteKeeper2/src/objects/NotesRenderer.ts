@@ -1,7 +1,7 @@
 import { Note } from "./Note";
 import { NotesLogic } from "./NotesLogic";
 
-export class RenderNotes{
+export class NotesRenderer{
     notesLogic: NotesLogic;
 
     constructor(logic: NotesLogic){

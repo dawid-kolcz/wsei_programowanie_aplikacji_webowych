@@ -1,11 +1,11 @@
 import { globalStorage, StorageType } from "../config";
 import { Note } from "./Note";
-import { RenderNotes } from "./RenderNotes";
+import { NotesRenderer } from "./NotesRenderer";
 import * as FB from "./FB";
 
 export class NotesLogic{
     notesArray: Array<Note> = [];
-    noteRenderer = new RenderNotes(this);
+    noteRenderer = new NotesRenderer(this);
 
     async getNotes(){
         switch (+globalStorage) {
