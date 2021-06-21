@@ -1,14 +1,14 @@
 import './main.scss';
-import { Note, Notes } from "./objects/Notes";
+import { NotesLogic } from './objects/NotesLogic';
 
 function main(): void{
-    const notes = new Notes();
+    const notes = new NotesLogic();
     
     notes.getNotes();
 
     const addButton = document.querySelector("#addNoteButton") as HTMLButtonElement;
     addButton.addEventListener("click", () => { 
-        notes.newNote();
+        notes.noteRenderer.newNote(false);
     });
 }
 

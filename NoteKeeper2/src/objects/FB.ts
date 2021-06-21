@@ -1,5 +1,5 @@
 import firebase from 'firebase';
-import { Note } from './Notes';
+import { Note } from './Note';
 import { firebaseConfig } from '../config';
 
 export const firebaseApp = firebase.initializeApp(firebaseConfig);

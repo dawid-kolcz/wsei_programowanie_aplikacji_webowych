@@ -1,129 +1,14 @@
-import { StorageType, globalStorage } from "../config";
-import * as FB from "./FB";
+import { Note } from "./Note";
+import { NotesLogic } from "./NotesLogic";
 
-export interface Note{
-    id: string,
-    title: string,    
-    content: string,
-    bgColor: string,
-    pinned: boolean,
-}
+export class RenderNotes{
+    notesLogic: NotesLogic;
 
-export class Notes{
-    notesArray: Array<Note> = [];
-
-    async getNotes(){
-        switch (+globalStorage) {
-            case StorageType.Firebase:
-                await this.getNotesFromFirebase();
-                break;
-            case StorageType.LocalStorage:
-                await this.getNotesFromStorage();
-                break;
-            default:
-                break;
-        }
+    constructor(logic: NotesLogic){
+        this.notesLogic = logic;
     }
 
-    async getNotesFromFirebase(){
-        const notesFromDB = await FB.getNotes();
-        notesFromDB.forEach(element => {
-            this.notesArray.push(<Note>element);
-        });
-        this.createNotesFromArray();
-        }
-
-    async getNotesFromStorage(){
-        this.notesArray = await JSON.parse(localStorage.getItem("notes"));
-        this.createNotesFromArray();
-    }
-
-    createNotesFromArray(){
-        this.notesArray.forEach(element => {
-            const newNote = this.newNote();
-            this.changeNoteValues(newNote, element);
-        });
-    }
-
-    async updateNote(id: string, note: Note){
-        switch (+globalStorage) {
-            case StorageType.Firebase:
-                    await this.updateNoteFirebase(id, note);
-                break;
-            case StorageType.LocalStorage:
-                    await this.updateNoteStorage(id, note);
-                break;
-            default:
-                break;
-        }
-    }
-
-    async updateNoteFirebase(id: string, note: Note){
-        const index = this.notesArray.findIndex( e => e.id == note.id );
-        this.notesArray[index] = note;
- 
-        FB.updateNote(id, note);
-    }
-
-    async updateNoteStorage(id: string, note:Note){
-        const index = this.notesArray.findIndex( e => e.id == note.id );
-        this.notesArray[index] = note;
-        
-        localStorage.setItem("notes", JSON.stringify(this.notesArray));
-    }
-
-    async deleteNote(note: Note){
-        switch(+globalStorage){
-            case StorageType.Firebase:
-                await this.deleteNoteFromFirebase(note);
-                break;
-            case StorageType.LocalStorage:
-                await this.deleteNoteFromStorage(note);
-                break;
-            default:
-        }
-    }
-
-    async deleteNoteFromFirebase(note: Note){
-        await FB.deleteNote(note.id);
-        let index = this.notesArray.findIndex(x => x.id == note.id);
-        this.notesArray.splice(index, 1);
-    }
-
-    async deleteNoteFromStorage(note: Note){
-        let index = this.notesArray.findIndex(x => x.id == note.id);
-        this.notesArray.splice(index, 1);
-        localStorage.setItem("notes", JSON.stringify(this.notesArray));
-    }
-
-    async saveNote(note: Note){
-        switch (+globalStorage) {
-            case StorageType.Firebase:
-                await this.saveNoteToFirebase(note);
-                break;
-            case StorageType.LocalStorage:
-                await this.saveNoteToLocalStorage(note);
-                break;
-            default:
-                break;
-        }
-    }
-    // Save note to database and assign note an ID.
-    async saveNoteToFirebase(note: Note){
-        await FB.addNote(note).then( id => note.id = id);
-        await FB.updateNote(note.id, note);
-    }
-
-    async saveNoteToLocalStorage(note: Note){
-        let i = 0;
-        this.notesArray.forEach(e => {
-            e.id = i+"";
-            i++;
-        });
-        localStorage.setItem("notes", JSON.stringify(this.notesArray));
-    }
-
-    newNote(): HTMLDivElement{
+    newNote(pinned: boolean): HTMLDivElement{
         const newNote = document.createElement("div") as HTMLDivElement;
     
         newNote.className = "note";
@@ -174,9 +59,7 @@ export class Notes{
         newNote.appendChild(editButton);
         newNote.appendChild(pinedTick);
         newNote.appendChild(buttonWrapper);
-        
-        pinedTick.checked ? 
-            document.querySelector("#pinnedWrapper").appendChild(newNote) :
+        pinned ? document.querySelector("#pinnedWrapper").appendChild(newNote) :
             document.querySelector("#notesWrapper").appendChild(newNote)
         
         return newNote;
@@ -197,8 +80,8 @@ export class Notes{
             bgColor: noteDiv.style.backgroundColor,
             pinned: pined.checked,
         }
-        this.notesArray.push(note)
-        await this.saveNote(note);
+        this.notesLogic.notesArray.push(note)
+        await this.notesLogic.saveNote(note);
         
         noteDiv.id = note.id;       
         noteDiv.removeChild(element.parentElement);
@@ -231,9 +114,9 @@ export class Notes{
     async onDeleteClick(event: Event){
         const element = <HTMLElement>event.target;
         let id = element.parentElement.id;
-        let index = this.notesArray.findIndex(e => e.id == id);
-        let note = this.notesArray[index];
-        await this.deleteNote(note);
+        let index = this.notesLogic.notesArray.findIndex(e => e.id == id);
+        let note = this.notesLogic.notesArray[index];
+        await this.notesLogic.deleteNote(note);
         element.parentElement.parentElement.removeChild(element.parentElement);
     }
 
@@ -265,32 +148,12 @@ export class Notes{
                 pinned: pinnedNote.checked
             };
             
-           await this.updateNote(note.id, note);
+           await this.notesLogic.updateNote(note.id, note);
         }
         
     }
 
-    changeNoteValues(noteElement: HTMLDivElement, note: Note){
-        noteElement.id = note.id;
-        noteElement.style.backgroundColor = note.bgColor;
-
-        const title = noteElement.querySelector(".noteTitle") as HTMLInputElement;
-        title.value = note.title;
-        
-        const content = noteElement.querySelector(".noteContent") as HTMLInputElement;
-        content.value = note.content;
-
-        const pinned = noteElement.querySelector(".pinnedNote") as HTMLInputElement;
-        pinned.checked = note.pinned;
-
-        noteElement.removeChild(noteElement.querySelector(".buttonWrapper"));
-
-        noteElement.querySelectorAll("input").forEach(element => {
-            element.disabled = true;
-        });
-    }
-
-    onPinClick(event: Event){
+    async onPinClick(event: Event){
         const notesWrapper = document.querySelector("#notesWrapper") as HTMLDivElement;
         const pinnedWrapper = document.querySelector("#pinnedWrapper") as HTMLDivElement;
         const element = <HTMLElement>event.target;
@@ -298,5 +161,22 @@ export class Notes{
 
         const pinned = noteDiv.querySelector(".pinnedNote") as HTMLInputElement;
 
+        const id = noteDiv.id;
+
+        const index = this.notesLogic.notesArray.findIndex(e => e.id == id);
+        const note = this.notesLogic.notesArray[index];
+
+        if(note.pinned){
+            note.pinned = false;
+            pinnedWrapper.removeChild(noteDiv);
+            notesWrapper.appendChild(noteDiv);
+        }else{
+            note.pinned = true;
+            pinnedWrapper.appendChild(noteDiv);
+            notesWrapper.removeChild(noteDiv);
+        }
+        
+        this.notesLogic.notesArray[index] = note;
+        await this.notesLogic.updateNote(id, note);
     }
 }
