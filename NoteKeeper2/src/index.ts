@@ -5,6 +5,7 @@ function main(): void{
     const notes = new NotesLogic();
     
     notes.getNotes();
+    console.log(notes.notesArray);
 
     const addButton = document.querySelector("#addNoteButton") as HTMLButtonElement;
     addButton.addEventListener("click", () => { 

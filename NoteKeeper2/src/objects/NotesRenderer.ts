@@ -10,7 +10,6 @@ export class NotesRenderer{
 
     newNote(pinned: boolean): HTMLDivElement{
         const newNote = document.createElement("div") as HTMLDivElement;
-    
         newNote.className = "note";
         newNote.style.backgroundColor = "yellow";
 
@@ -21,43 +20,41 @@ export class NotesRenderer{
         const newContent = document.createElement("input") as HTMLInputElement;
         newContent.className = "noteContent";
         newContent.placeholder = "All your notes belong here..."
-        
+
+        const saveButton = this.createSaveButton();
         const deleteButton = this.createDeleteButton();
         const editButton = this.createEditButton();
+        const pinInput = this.createPinInput();
 
+        const saveButtonWrapper = document.createElement("div") as HTMLDivElement;
+        saveButtonWrapper.className = "saveButtonWrapper";
+        
         const buttonWrapper = document.createElement("div") as HTMLDivElement;
         buttonWrapper.className = "buttonWrapper";
-        
-        const blueButton   = this.createColorButton("lightblueBGButton", "blue");
+
+        const aquamarineButton   = this.createColorButton("aquamarineBGButton", "aquamarine");
         const greenButton  = this.createColorButton("greenBGButton", "green");
         const yellowButton = this.createColorButton("yellowBGButton", "yellow");
         const whiteButton  = this.createColorButton("whiteBGButton", "white");
     
-        const pinedTick = document.createElement("input") as HTMLInputElement;
-        pinedTick.type = "checkbox";
-        pinedTick.className = "pinnedNote";
-        pinedTick.addEventListener("click", (event) => this.onPinClick(event));
-
-        const saveButton = document.createElement("button") as HTMLButtonElement;
-        saveButton.innerText = "Save note";
-        saveButton.addEventListener("click", (event) => this.onSaveClick(event));
-
-        this.onBGColorClick(blueButton, newNote);
+        this.onBGColorClick(aquamarineButton, newNote);
         this.onBGColorClick(greenButton, newNote);
         this.onBGColorClick(yellowButton, newNote);
         this.onBGColorClick(whiteButton, newNote);
 
-        buttonWrapper.appendChild(blueButton);
-        buttonWrapper.appendChild(greenButton);
-        buttonWrapper.appendChild(yellowButton);
-        buttonWrapper.appendChild(whiteButton);
-        buttonWrapper.appendChild(saveButton);
+        saveButtonWrapper.appendChild(aquamarineButton);
+        saveButtonWrapper.appendChild(greenButton);
+        saveButtonWrapper.appendChild(yellowButton);
+        saveButtonWrapper.appendChild(whiteButton);
+        saveButtonWrapper.appendChild(saveButton);
+
+        buttonWrapper.appendChild(deleteButton);
+        buttonWrapper.appendChild(editButton);
+        buttonWrapper.appendChild(pinInput);
 
         newNote.appendChild(newTitle);
         newNote.appendChild(newContent);
-        newNote.appendChild(deleteButton);
-        newNote.appendChild(editButton);
-        newNote.appendChild(pinedTick);
+        newNote.appendChild(saveButtonWrapper);
         newNote.appendChild(buttonWrapper);
         pinned ? document.querySelector("#pinnedWrapper").appendChild(newNote) :
             document.querySelector("#notesWrapper").appendChild(newNote)
@@ -65,10 +62,19 @@ export class NotesRenderer{
         return newNote;
     }
     
+    createSaveButton(): HTMLButtonElement{
+        const button = document.createElement("button") as HTMLButtonElement;
+        button.innerText = "Save note";
+        button.className = "saveButton";
+        button.addEventListener("click", (event) => this.onSaveClick(event));
+
+        return button;
+    }
+
     async onSaveClick(event: Event){
         const element = <HTMLElement>event.target;
         const noteDiv = element.parentElement.parentElement;
-
+        const buttonWrapper = noteDiv.querySelector(".saveButtonWrapper") as HTMLDivElement;
         const title = noteDiv.querySelector(".noteTitle") as HTMLInputElement;
         const content = noteDiv.querySelector(".noteContent") as HTMLInputElement;
         const pined = noteDiv.querySelector(".pinnedNote") as HTMLInputElement;
@@ -84,7 +90,7 @@ export class NotesRenderer{
         await this.notesLogic.saveNote(note);
         
         noteDiv.id = note.id;       
-        noteDiv.removeChild(element.parentElement);
+        noteDiv.removeChild(buttonWrapper);
         noteDiv.querySelectorAll("input").forEach(element => {
             element.disabled = true;
         })
@@ -113,11 +119,14 @@ export class NotesRenderer{
 
     async onDeleteClick(event: Event){
         const element = <HTMLElement>event.target;
-        let id = element.parentElement.id;
+        const noteDiv = element.parentElement.parentElement;
+        
+        let id = noteDiv.id;
         let index = this.notesLogic.notesArray.findIndex(e => e.id == id);
         let note = this.notesLogic.notesArray[index];
+        
         await this.notesLogic.deleteNote(note);
-        element.parentElement.parentElement.removeChild(element.parentElement);
+        noteDiv.parentElement.removeChild(noteDiv);
     }
 
     createEditButton(): HTMLButtonElement{
@@ -130,8 +139,10 @@ export class NotesRenderer{
 
     async onEditClick(event: Event){
         const element = <HTMLElement>event.target;
-        const inputs = element.parentElement.querySelectorAll("input");
-        const editButton = element.parentElement.querySelector(".editButton") as HTMLButtonElement;
+        const noteDiv = element.parentElement.parentElement as HTMLDivElement;
+        const buttonWrapper = noteDiv.querySelector(".buttonWrapper");        
+        const inputs = noteDiv.querySelectorAll("input");
+        const editButton = noteDiv.querySelector(".editButton") as HTMLButtonElement;
 
         if(inputs[0].disabled = true && inputs[1].disabled == true){
             inputs.forEach(e => e.disabled = false);
@@ -139,44 +150,39 @@ export class NotesRenderer{
         }else{
             inputs.forEach(e => e.disabled = true);
             editButton.innerText = "Edit";
-            const pinnedNote = element.parentElement.querySelector(".pinnedNote") as HTMLInputElement;
+            const pinnedNote = buttonWrapper.querySelector(".pinnedNote") as HTMLInputElement;
             const note: Note = {
-                id: element.parentElement.id,
+                id: noteDiv.id,
                 title: inputs[0].value,
                 content: inputs[1].value,
-                bgColor: element.parentElement.style.backgroundColor,
+                bgColor: noteDiv.style.backgroundColor,
                 pinned: pinnedNote.checked
             };
-            
-           await this.notesLogic.updateNote(note.id, note);
+            note.pinned ? this.switchPinned(noteDiv, true) : this.switchPinned(noteDiv, false);
+
+            await this.notesLogic.updateNote(note.id, note);
         }
         
     }
 
-    async onPinClick(event: Event){
-        const notesWrapper = document.querySelector("#notesWrapper") as HTMLDivElement;
-        const pinnedWrapper = document.querySelector("#pinnedWrapper") as HTMLDivElement;
-        const element = <HTMLElement>event.target;
-        const noteDiv = element.parentElement;
+    createPinInput(): HTMLInputElement{
+        const input = document.createElement("input") as HTMLInputElement;
+        input.type = "checkbox";
+        input.className = "pinnedNote";
+        // input.addEventListener("click", (event) => this.onPinClick(event));
 
-        const pinned = noteDiv.querySelector(".pinnedNote") as HTMLInputElement;
+        return input; 
+    }
 
-        const id = noteDiv.id;
-
-        const index = this.notesLogic.notesArray.findIndex(e => e.id == id);
-        const note = this.notesLogic.notesArray[index];
-
-        if(note.pinned){
-            note.pinned = false;
-            pinnedWrapper.removeChild(noteDiv);
-            notesWrapper.appendChild(noteDiv);
+    switchPinned(div: HTMLDivElement, pin: boolean){
+        const notesWrapper = document.querySelector("#notesWrapper");
+        const pinedWrapper = document.querySelector("#pinnedWrapper");
+        if(pin){
+            pinedWrapper.appendChild(div);
+            // notesWrapper.removeChild(div);
         }else{
-            note.pinned = true;
-            pinnedWrapper.appendChild(noteDiv);
-            notesWrapper.removeChild(noteDiv);
+            notesWrapper.appendChild(div);
+            // pinedWrapper.removeChild(div);
         }
-        
-        this.notesLogic.notesArray[index] = note;
-        await this.notesLogic.updateNote(id, note);
     }
 }

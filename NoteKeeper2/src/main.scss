@@ -1,3 +1,98 @@
 body {
   background: lightblue;
 }
+#mainWrapper{
+  display: flex;
+  flex-direction: column;
+  width: 1000px;
+}
+
+#pinnedWrapper{
+  display: flex;
+  margin: 10px;
+}
+
+#notesWrapper{
+  display: flex;
+  margin: 10px;
+}
+
+.note{
+  display: flex;
+  flex-direction: column;
+  width: 250px;
+  height:  250px;
+  border-radius: 5px;
+  margin: 5px;
+}
+
+.note input{
+  border: 0px;
+  background: transparent;
+  color: black;
+}
+
+.noteTitle{
+  margin: 5px;  
+}
+
+
+.noteContent{
+  margin: 3px;
+  width: 200px;
+  height: 200px;
+  text-align: left;
+  box-sizing: border-box;
+}
+
+.pinnedNote{
+
+}
+
+.buttonWrapper{
+  display: flex;
+  flex-direction: row;
+}
+
+.saveButtonWrapper{
+  display: flex;
+  flex-direction: row;
+}
+
+.colorButtons{
+  width: 30px;
+  height: 30px;
+  box-sizing: border-box;
+}
+
+.aquamarineBGButton{
+  @extend .colorButtons;
+ background-color: aquamarine; 
+}
+
+.greenBGButton{
+  @extend .colorButtons;
+  background-color: green;  
+}
+
+.yellowBGButton{
+  @extend .colorButtons;
+  background-color: yellow;  
+}
+
+.whiteBGButton{
+  @extend .colorButtons;
+  background-color: white;  
+}
+
+.deleteButton{
+
+}
+
+.editButton{
+
+}
+
+.saveButton{
+
+}

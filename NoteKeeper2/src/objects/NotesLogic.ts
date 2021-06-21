@@ -130,7 +130,7 @@ export class NotesLogic{
         const pinned = noteElement.querySelector(".pinnedNote") as HTMLInputElement;
         pinned.checked = note.pinned;
 
-        noteElement.removeChild(noteElement.querySelector(".buttonWrapper"));
+        noteElement.removeChild(noteElement.querySelector(".saveButtonWrapper"));
 
         noteElement.querySelectorAll("input").forEach(element => {
             element.disabled = true;
