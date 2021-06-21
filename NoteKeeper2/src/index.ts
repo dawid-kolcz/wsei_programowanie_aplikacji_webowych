@@ -1,5 +1,4 @@
 import './main.scss';
-import  * as FB from "./objects/FB";
 import { Note, Notes } from "./objects/Notes";
 
 function main(): void{
@@ -10,7 +9,6 @@ function main(): void{
     const addButton = document.querySelector("#addNoteButton") as HTMLButtonElement;
     addButton.addEventListener("click", () => { 
         notes.newNote();
-        console.log("Create new note");
     });
 }
 

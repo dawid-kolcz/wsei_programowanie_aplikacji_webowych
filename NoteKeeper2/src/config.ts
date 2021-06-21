@@ -12,4 +12,4 @@ export enum StorageType{
   LocalStorage,
 }
 
-export const globalStorage = StorageType.LocalStorage;
+export const globalStorage = StorageType.Firebase;

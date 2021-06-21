@@ -23,6 +23,7 @@ export async function getNote(id: string) {
     return db.collection('notes').doc(id).get().then(res => ({id: res.id, data: res.data()}))
 }
 
-export async function getNotes() {
-    return db.collection('notes').get().then(res => ({size: res.size, docs: res.docs}))
+export async function getNotes(){
+    const snapshot = await db.collection("notes").get();
+    return snapshot.docs.map(doc => doc.data());
 }
