@@ -136,6 +136,4 @@ export class NotesLogic{
             element.disabled = true;
         });
     }
-
-
 }
